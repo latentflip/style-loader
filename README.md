@@ -1,4 +1,21 @@
-# style loader for webpack
+# style noreuse loader for webpack
+
+Umm, sorry about the crappy name, couldn't think of a better one.
+
+This is a fork of style-loader which does the same thing, except:
+
+1. doesn't support hot loaders
+2. doesn't worry about singletons, or the useable etc options
+3. doesn't reuse style tags when encountering the same module id
+
+**Why?**
+
+The why for this module is that I currently haven't figured out a better way to deal with a problem I'm having.
+
+I'm publishing a library of react components, that want to have their own css modules bundled, but don't want to depend on an end user properly configuring webpack for me. So I'm pre-bundling components, and setting it's dependencies as webpack externals.
+
+The trouble is, that if a prebundled component is used inside another webpack app, that basically works except module.ids get reused. That's normally not a problem as they're scoped within the component, _but_ the module.id _is_ shared with style-loader, who will just replace styles if it encounters styles for the same id as it had previously.
+
 
 ## Usage
 
@@ -20,62 +37,16 @@ require("style/url!file!./file.css");
 // => add a <link rel="stylesheet"> to file.css to document
 ```
 
-### Local scope CSS
-
-(experimental)
-
-When using [local scope CSS](https://github.com/webpack/css-loader#local-scope) the module exports the generated identifiers:
-
-``` javascript
-var style = require("style!css!./file.css");
-style.placeholder1 === "z849f98ca812bc0d099a43e0f90184"
-```
-
-### Reference-counted API
-
-``` javascript
-var style = require("style/useable!css!./file.css");
-style.use(); // = style.ref();
-style.unuse(); // = style.unref();
-```
-
-Styles are not added on `require`, but instead on call to `use`/`ref`. Styles are removed from page if `unuse`/`unref` is called exactly as often as `use`/`ref`.
-
-Note: Behavior is undefined when `unuse`/`unref` is called more often than `use`/`ref`. Don't do that.
-
 ### Options
 
 #### `insertAt`
 
 By default, the style-loader appends `<style>` elements to the end of the `<head>` tag of the page. This will cause CSS created by the loader to take priority over CSS already present in the document head. To insert style elements at the beginning of the head, set this query parameter to 'top', e.g. `require('../style.css?insertAt=top')`.
 
-#### `singleton`
-
-If defined, the style-loader will re-use a single `<style>` element, instead of adding/removing individual elements for each required module. **Note:** this option is on by default in IE9, which has strict limitations on the number of style tags allowed on a page. You can enable or disable it with the singleton query parameter (`?singleton` or `?-singleton`).
-
-## Recommended configuration
-
-By convention the reference-counted API should be bound to `.useable.css` and the simple API to `.css` (similar to other file types, i.e. `.useable.less` and `.less`).
-
-So the recommended configuration for webpack is:
-
-``` javascript
-{
-  module: {
-    loaders: [
-      { test: /\.css$/, exclude: /\.useable\.css$/, loader: "style!css" },
-      { test: /\.useable\.css$/, loader: "style/useable!css" }
-    ]
-  }
-}
-```
-
-**Note** about source maps support and assets referenced with `url`: when style loader is used with ?sourceMap option, the CSS modules will be generated as `Blob`s, so relative paths don't work (they would be relative to `chrome:blob` or `chrome:devtools`). In order for assets to maintain correct paths setting `output.publicPath` property of webpack configuration must be set, so that absolute paths are generated.
-
 ## Install
 
 ```
-npm install style-loader
+npm install style-noreuse-loader
 ```
 
 ## License

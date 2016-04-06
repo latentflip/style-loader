@@ -1,14 +1,14 @@
 {
-  "name": "style-loader",
-  "version": "0.13.1",
-  "author": "Tobias Koppers @sokra",
+  "name": "style-noreuse-loader",
+  "version": "0.1.0",
+  "author": "Philip Roberts @latentflip, Tobias Koppers @sokra",
   "description": "style loader module for webpack",
   "devDependencies": {
     "css-loader": "~0.8.0"
   },
   "repository": {
     "type": "git",
-    "url": "git@github.com:webpack/style-loader.git"
+    "url": "git@github.com:latentflip/style-noreuse-loader.git"
   },
   "license": "MIT",
   "dependencies": {
